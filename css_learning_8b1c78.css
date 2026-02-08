@@ -1,0 +1,255 @@
+/*
+  LEARNING OBJECTIVE:
+  This tutorial will teach you how to create a scroll-triggered timeline effect
+  using CSS animations and a simple HTML structure. We'll focus on how to
+  animate elements into view as the user scrolls down the page, creating an
+  engaging and dynamic user experience.
+*/
+
+/*
+  SECTION 1: Basic Styling and Layout
+  ----------------------------------
+  We'll start by setting up the basic layout for our timeline.
+  This involves creating a container for the timeline and styling
+  the individual timeline items.
+*/
+
+/*
+  The main container for our entire timeline.
+  We use 'position: relative' so that absolutely positioned
+  timeline markers can be positioned relative to this container.
+  'overflow-x: hidden' prevents horizontal scrolling if elements
+  spill over, ensuring a clean vertical flow.
+*/
+.timeline-container {
+  position: relative; /* Crucial for positioning timeline markers */
+  width: 80%; /* Set a width for the timeline */
+  margin: 50px auto; /* Center the timeline on the page with some vertical spacing */
+  padding: 20px 0; /* Add some padding top and bottom */
+}
+
+/*
+  A horizontal line representing the timeline itself.
+  'position: absolute' allows us to place it precisely within
+  the 'timeline-container'.
+  'left: 50%' and 'transform: translateX(-50%)' centers this line
+  horizontally.
+  'width: 2px' makes it a thin vertical line.
+  'background-color' sets its visual color.
+  'top' and 'bottom' stretch it to cover the entire height of the container.
+*/
+.timeline-container::before {
+  content: ''; /* Required for ::before pseudo-elements */
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px; /* Thickness of the timeline line */
+  background-color: #ccc; /* Color of the timeline line */
+  top: 0;
+  bottom: 0;
+  z-index: 1; /* Ensures the line is behind the content */
+}
+
+/*
+  Individual items within the timeline.
+  We'll use 'display: flex' to help align content on either side of the timeline.
+  'margin-bottom' provides spacing between timeline items.
+  'position: relative' is important for positioning the timeline dots.
+*/
+.timeline-item {
+  display: flex; /* Use flexbox for alignment */
+  justify-content: center; /* Center items horizontally */
+  align-items: center; /* Center items vertically */
+  margin-bottom: 60px; /* Space between each item */
+  position: relative; /* Allows absolute positioning of the dot */
+  width: 50%; /* Each item takes up half the width */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  padding: 10px; /* Internal spacing */
+}
+
+/*
+  For items that appear on the right side of the timeline line.
+  We use 'margin-left: auto' to push them to the right.
+*/
+.timeline-item:nth-child(even) {
+  margin-left: auto; /* Push even items to the right */
+}
+
+/*
+  The dot or marker on the timeline for each item.
+  'position: absolute' places it precisely on the timeline line.
+  'left: 50%' and 'transform: translate(-50%, -50%)' centers the dot on the line.
+  'width' and 'height' define the dot's size.
+  'background-color' sets its color.
+  'border-radius: 50%' makes it perfectly round.
+  'z-index: 2' ensures it appears above the timeline line.
+*/
+.timeline-item::after {
+  content: ''; /* Required for ::after pseudo-elements */
+  position: absolute;
+  left: 50%;
+  top: 50%; /* Position the dot in the vertical middle of the item */
+  transform: translate(-50%, -50%); /* Center the dot precisely */
+  width: 16px; /* Size of the dot */
+  height: 16px; /* Size of the dot */
+  background-color: #007bff; /* Color of the dot */
+  border-radius: 50%; /* Makes it a circle */
+  z-index: 2; /* Ensure it's above the timeline line */
+}
+
+/*
+  We need to adjust the position of the dot for items on the right side.
+  For even items, their content is to the right, so we adjust the dot's
+  horizontal position to align correctly with the timeline line.
+*/
+.timeline-item:nth-child(even)::after {
+  left: 0; /* Align dot to the left of the item's content box */
+  transform: translate(-50%, -50%); /* Re-center based on the new left */
+}
+
+/*
+  SECTION 2: Scroll-Triggered Animation
+  ------------------------------------
+  This is where the magic happens! We'll use CSS animations
+  to make the timeline items fade and slide into view.
+*/
+
+/*
+  Define the animation for our timeline items.
+  'from' (or '0%') sets the initial state (invisible and slightly above).
+  'to' (or '100%') sets the final state (fully visible and at its normal position).
+*/
+@keyframes fadeInAndSlide {
+  from {
+    opacity: 0; /* Start invisible */
+    transform: translateY(30px); /* Start slightly below its final position */
+  }
+  to {
+    opacity: 1; /* Become fully visible */
+    transform: translateY(0); /* Move to its normal position */
+  }
+}
+
+/*
+  Apply the animation to all timeline items.
+  'animation-name' links to the @keyframes rule.
+  'animation-duration' sets how long the animation takes.
+  'animation-timing-function' controls the speed curve (ease-out is common for fading in).
+  'animation-fill-mode: forwards' is crucial: it keeps the element in its
+  final state (100% of the animation) after it finishes. Without this,
+  the element would revert to its 'from' state.
+*/
+.timeline-item {
+  /* ... (previous styles) ... */
+  opacity: 0; /* Initially hide all items */
+  animation: fadeInAndSlide 0.8s ease-out forwards;
+}
+
+/*
+  We want the animations to stagger, meaning each item starts a little later.
+  This creates a more natural, flowing effect.
+  'animation-delay' adds a pause before the animation starts.
+  We use 'nth-child' to apply different delays to each item.
+*/
+.timeline-item:nth-child(1) { animation-delay: 0.2s; } /* First item starts after 0.2s */
+.timeline-item:nth-child(2) { animation-delay: 0.4s; } /* Second item starts after 0.4s */
+.timeline-item:nth-child(3) { animation-delay: 0.6s; } /* Third item starts after 0.6s */
+.timeline-item:nth-child(4) { animation-delay: 0.8s; } /* Fourth item starts after 0.8s */
+/* Add more delays for more items as needed */
+
+/*
+  SECTION 3: Content Styling
+  --------------------------
+  Style the actual content within each timeline item.
+*/
+
+/*
+  The content box for each timeline item.
+  'padding' adds space inside the content.
+  'background-color' makes it stand out.
+  'border-radius' gives it rounded corners.
+  'box-shadow' adds depth.
+  'text-align' centers the text.
+  'width' and 'max-width' control its size and responsiveness.
+*/
+.timeline-content {
+  padding: 15px 20px;
+  background-color: #f8f9fa; /* Light background for content */
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  text-align: center;
+  width: 100%; /* Take full width of its parent item */
+  max-width: 300px; /* Prevent content from becoming too wide */
+  margin: 0 auto; /* Center the content block if it's narrower than its parent */
+}
+
+/*
+  For items on the right side, we need to adjust the margin to ensure
+  the content is correctly aligned relative to the timeline line.
+  'margin-right: auto' pushes the content box to the left within its
+  parent's (the .timeline-item) right-aligned space.
+*/
+.timeline-item:nth-child(even) .timeline-content {
+  margin-right: auto; /* Ensure content is left-aligned within the right-side item */
+}
+
+/*
+  Style for the heading within the content.
+*/
+.timeline-content h3 {
+  margin-top: 0;
+  color: #333;
+  font-size: 1.2em;
+}
+
+/*
+  Style for the paragraph text within the content.
+*/
+.timeline-content p {
+  color: #555;
+  font-size: 0.95em;
+  line-height: 1.5;
+}
+
+/*
+  EXAMPLE USAGE:
+  ---------------------------------------------------------------------
+  To use this timeline, create an HTML structure like the one below
+  inside your `<body>` tag. Ensure you link this CSS file.
+  The scroll-triggered animation will automatically work as users scroll
+  down the page, revealing each timeline item.
+  ---------------------------------------------------------------------
+*/
+
+/*
+<div class="timeline-container">
+  <div class="timeline-item">
+    <div class="timeline-content">
+      <h3>Event Title 1</h3>
+      <p>Description of the first significant event. This content will fade in as you scroll.</p>
+    </div>
+  </div>
+
+  <div class="timeline-item">
+    <div class="timeline-content">
+      <h3>Event Title 2</h3>
+      <p>The second event in our timeline. Notice how it appears sequentially.</p>
+    </div>
+  </div>
+
+  <div class="timeline-item">
+    <div class="timeline-content">
+      <h3>Event Title 3</h3>
+      <p>A third milestone. The staggered animation makes it feel more engaging.</p>
+    </div>
+  </div>
+
+  <div class="timeline-item">
+    <div class="timeline-content">
+      <h3>Event Title 4</h3>
+      <p>The final event for this example. You can add as many as you need.</p>
+    </div>
+  </div>
+  // Add more .timeline-item divs as needed
+</div>
+*/
